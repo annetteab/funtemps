@@ -4,7 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"github.com/annetteab/funtemps/conv"
+	"github.com/annetteab/funtemps/funfacts"
 	"math"
+	
 )
 
 // Definerer flag-variablene i hoved-"scope"
@@ -12,7 +14,7 @@ var fahr float64
 var kelv float64
 var cels float64
 var out string
-var funfacts string
+var funFacts string
 
 // Bruker init (som anbefalt i dokumentasjonen) for å sikre at flagvariablene
 // er initialisert.
@@ -34,11 +36,12 @@ func init() {
 	// flag.StringVar(&funfacts, "funfacts", "sun", "\"fun-facts\" om sun - Solen, luna - Månen og terra - Jorden")
 	// Du må selv definere flag-variabelen for -t flagget, som bestemmer
 	// hvilken temperaturskala skal brukes når funfacts skal vises
-
+	flag.StringVar(&funFacts, "funfacts", "sun", "funfacts om sola, månen og jorda")
+	flag.StringVar(&out, "t", "C", "beregne temperatur i C, F og K")
 }
 
 func main() {
-
+	
 	flag.Parse()
 
 	/**
@@ -86,19 +89,19 @@ func main() {
 		// kalle opp funksjonen FahrenheitToKelvin(fahr)
 		res := FloatToString( conv.FahrenheitToKelvin(fahr))
 		inp := fmt.Sprintf("%g", fahr)
-		fmt.Println(inp + "°F er " + res + "°K")
+		fmt.Println(inp + "°F er " + res + "K")
 	}
 	if out == "C" && isFlagPassed("K") {
 		// kalle opp funksjonen KelvinToCelsius(kelv)
 		res := FloatToString( conv.KelvinToCelsius(kelv))
 		inp := fmt.Sprintf("%g",kelv )
-		fmt.Println(inp + "°K er " + res + "°C")
+		fmt.Println(inp + "K er " + res + "°C")
 	}
 	if out == "K" && isFlagPassed("C") {
 		// kalle opp funksjonen CelsiusToKelvin(cels)
 		res := FloatToString( conv.CelsiusToKelvin(cels))
 		inp := fmt.Sprintf("%g",cels )
-		fmt.Println(inp + "°C er " + res + "°K")
+		fmt.Println(inp + "°C er " + res + "K")
 	}
 	if out == "F" && isFlagPassed("C") {
 		// kalle opp funksjonen CelsiusToKelvin(cels)
@@ -110,7 +113,13 @@ func main() {
 		// kalle opp funksjonen KelvinToFahrenheit(kelv)
 		res := FloatToString( conv.KelvinToFahrenheit(kelv))
 		inp := fmt.Sprintf("%g",kelv )
-		fmt.Println(inp + "°K er " + res + "°F")
+		fmt.Println(inp + "K er " + res + "°F")
+	}
+//Funfacts
+	if out == "C" && isFlagPassed("funfacts") {
+		res := funfacts.GetFunFacts(funFacts)
+		fmt.Println( res[0]+ FloatToString(funfacts.GetTempFacts(funFacts)[0] ) + "°C")
+		fmt.Println( res[1]+ FloatToString(funfacts.GetTempFacts(funFacts)[1] ) + "°C")
 	}
 }
 
@@ -126,9 +135,13 @@ func isFlagPassed(name string) bool {
 	return found
 }
 func FloatToString(value float64) string {
+	temp :=""
 	if math.Trunc(value) == value {
-		return fmt.Sprintf("%.0f", value)
+		temp = fmt.Sprintf("%.0f", value)
 	} else {
-		return fmt.Sprintf("%.2f", value)
+		temp = fmt.Sprintf("%.2f", value)
 	}
+
+	//split:=strings.Split(temp, ".")
+	return temp 
 }
